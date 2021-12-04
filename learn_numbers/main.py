@@ -20,11 +20,13 @@ def translate(translator, text):
 def main():
     engine = inflect.engine()
     translator = Translator()
-    max_int = int(input("Give maximum number: "))
+    number_range = [int(num) for num in input("Give the number range: ").split(" ")]
+    if len(number_range) == 1:
+        number_range.insert(0, 1)
     use_sound = {"y": True}.get(input("Use sound? (y/n)"), False)
 
     while True:
-        number = int(random.randint(1, max_int))
+        number = int(random.randint(*number_range[:2]))
         number_text = engine.number_to_words(number)
         resp = translate(translator, number_text)
         if not resp:
@@ -36,13 +38,17 @@ def main():
             myobj.save("temp.mp3")
             playsound("temp.mp3")
             print("")
+            while True:
+                ret = input()
+                if ret == "r":
+                    playsound("temp.mp3")
+                else:
+                    break
+            print(f"\nNumber: {number_text} ({number})")
         else:
             print(f"\nNumber: {number_text} ({number})")
+            input()
 
-        input()
-
-        if use_sound:
-            print(f"\nNumber: {number_text} ({number})")
         print(f"Correct answer: {resp.text}")
 
         answer = input("\nDo you want to continue? (y/n)")
